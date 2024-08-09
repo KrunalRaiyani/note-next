@@ -1,10 +1,10 @@
 "use client";
-import { Note } from "@/components/Note";
+import { CreateAccount } from "@/components/CreateAccount";
 
 export default function Home() {
   return (
     <div>
-      <Note />
+      <CreateAccount />
     </div>
   );
 }
