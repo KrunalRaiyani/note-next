@@ -3,7 +3,6 @@ import UserModel from "@/app/lib/model/user";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { signJos } from "@/lib/utils";
 
 export async function POST(req) {
   const { route, password } = await req.json();
@@ -29,17 +28,12 @@ export async function POST(req) {
     }
 
     // Generate JWT with user ID
-    // const token = jwt.sign(
-    //   { userId: user._id },
-    //   process.env.NEXT_PUBLIC_JWT_SECRET,
-    //   {
-    //     expiresIn: "30d",
-    //   }
-    // ); // Set appropriate expiration time
-
-    const token = await signJos(
+    const token = jwt.sign(
       { userId: user._id },
-      process.env.NEXT_PUBLIC_JWT_SECRET
+      process.env.NEXT_PUBLIC_JWT_SECRET,
+      {
+        expiresIn: "30d",
+      }
     );
 
     return NextResponse.json({ userId: user._id, token }, { status: 200 });

@@ -33,7 +33,7 @@ export async function POST(req) {
 
     return NextResponse.json({ data: savedUser, token }, { status: 201 });
   } catch (error) {
-    console.error(error);
+    console.error("error", error);
     return NextResponse.json(
       { message: "Something went wrong" },
       { status: 500 }

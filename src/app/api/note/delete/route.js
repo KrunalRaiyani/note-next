@@ -3,7 +3,7 @@ import NoteModel from "@/app/lib/model/note";
 import { verigtToken } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
-export async function POST(req) {
+export async function DELETE(req) {
   await dbConnect(); // Ensure you are connected to the database
 
   const token = await req.headers.get("authorization");
@@ -19,7 +19,7 @@ export async function POST(req) {
   const result = await verigtToken(token);
 
   const userId = result?.userId;
-  const { noteId, note, title } = body;
+  const { noteId } = body;
 
   if (!userId) {
     return NextResponse.json(
@@ -37,17 +37,15 @@ export async function POST(req) {
 
   try {
     const existingNote = await NoteModel.findOne({ noteId, userId });
-    console.log("----------", existingNote);
 
     if (existingNote) {
-      existingNote.note = note || existingNote.note;
-      existingNote.title = title || existingNote.title;
-      const updatedNote = await existingNote.save();
-      return NextResponse.json(updatedNote, { status: 200 });
+      await NoteModel.deleteOne({ noteId, userId });
+      return NextResponse.json(
+        { message: "Note deleted successfully" },
+        { status: 200 }
+      );
     } else {
-      const newNote = new NoteModel({ note, noteId, userId, title });
-      const savedNote = await newNote.save();
-      return NextResponse.json(savedNote, { status: 201 });
+      return NextResponse.json({ message: "Note not found" }, { status: 404 });
     }
   } catch (error) {
     return NextResponse.json(
