@@ -1,10 +1,13 @@
 import dbConnect from "@/app/lib/db";
 import NoteModel from "@/app/lib/model/note";
+import UserModel from "@/app/lib/model/user";
 import { verigtToken } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
-export async function DELETE(req) {
-  await dbConnect(); // Ensure you are connected to the database
+export async function DELETE(req, { params }) {
+  await dbConnect();
+
+  console.log(params, "--------------");
 
   const token = await req.headers.get("authorization");
 
@@ -15,11 +18,10 @@ export async function DELETE(req) {
     );
   }
 
-  const body = await req.json();
   const result = await verigtToken(token);
 
   const userId = result?.userId;
-  const { noteId } = body;
+  const { noteId } = params;
 
   if (!userId) {
     return NextResponse.json(
@@ -37,6 +39,15 @@ export async function DELETE(req) {
 
   try {
     const existingNote = await NoteModel.findOne({ noteId, userId });
+
+    const user = await UserModel.findOne({ _id: userId });
+
+    if (user?.route != params?.route) {
+      return NextResponse.json(
+        { message: "Invalid route access" },
+        { status: 404 }
+      );
+    }
 
     if (existingNote) {
       await NoteModel.deleteOne({ noteId, userId });

@@ -1,9 +1,10 @@
 import dbConnect from "@/app/lib/db";
 import NoteModel from "@/app/lib/model/note";
+import UserModel from "@/app/lib/model/user";
 import { verigtToken } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
-export async function POST(req) {
+export async function POST(req, { params }) {
   await dbConnect(); // Ensure you are connected to the database
 
   const token = await req.headers.get("authorization");
@@ -17,6 +18,8 @@ export async function POST(req) {
 
   const body = await req.json();
   const result = await verigtToken(token);
+
+  console.log(result, "-----------------");
 
   const userId = result?.userId;
   const { noteId, note, title } = body;
@@ -37,7 +40,15 @@ export async function POST(req) {
 
   try {
     const existingNote = await NoteModel.findOne({ noteId, userId });
-    console.log("----------", existingNote);
+
+    const user = await UserModel.findOne({ _id: userId });
+
+    if (user?.route != params?.route) {
+      return NextResponse.json(
+        { message: "Invalid route access" },
+        { status: 404 }
+      );
+    }
 
     if (existingNote) {
       existingNote.note = note || existingNote.note;
