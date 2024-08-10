@@ -22,8 +22,11 @@ export async function DELETE(req, { params }) {
   }
 
   const note = await NoteModel.findOne({ noteId });
-
   const objectIdNoteId = note?._id;
+
+  if (!objectIdNoteId) {
+    return NextResponse.json({ message: "Note not found" }, { status: 404 });
+  }
 
   if (passcode) {
     // If passcode is present, validate permissions
@@ -85,6 +88,31 @@ export async function DELETE(req, { params }) {
         { $pull: { noteIds: objectIdNoteId } }
       );
       console.log("Update Result:", checkUpdate);
+
+      // Check if permissions have no noteIds left and delete them
+      if (checkUpdate.modifiedCount > 0) {
+        const emptyPermissions = await PermissionModel.find({
+          noteIds: { $size: 0 },
+        });
+        if (emptyPermissions.length > 0) {
+          const emptyPermissionIds = emptyPermissions.map((p) => p._id);
+
+          // Delete permissions with no noteIds
+          await PermissionModel.deleteMany({
+            _id: { $in: emptyPermissionIds },
+          });
+
+          // Remove these permissions from the user's permissions list
+          await UserModel.updateMany(
+            { "permissions.permissionId": { $in: emptyPermissionIds } },
+            {
+              $pull: {
+                permissions: { permissionId: { $in: emptyPermissionIds } },
+              },
+            }
+          );
+        }
+      }
 
       return NextResponse.json(
         { message: "Note deleted successfully" },
@@ -148,6 +176,31 @@ export async function DELETE(req, { params }) {
         { $pull: { noteIds: objectIdNoteId } }
       );
       console.log("Update Result:", checkUpdate);
+
+      // Check if permissions have no noteIds left and delete them
+      if (checkUpdate.modifiedCount > 0) {
+        const emptyPermissions = await PermissionModel.find({
+          noteIds: { $size: 0 },
+        });
+        if (emptyPermissions.length > 0) {
+          const emptyPermissionIds = emptyPermissions.map((p) => p._id);
+
+          // Delete permissions with no noteIds
+          await PermissionModel.deleteMany({
+            _id: { $in: emptyPermissionIds },
+          });
+
+          // Remove these permissions from the user's permissions list
+          await UserModel.updateMany(
+            { "permissions.permissionId": { $in: emptyPermissionIds } },
+            {
+              $pull: {
+                permissions: { permissionId: { $in: emptyPermissionIds } },
+              },
+            }
+          );
+        }
+      }
 
       return NextResponse.json(
         { message: "Note deleted successfully" },

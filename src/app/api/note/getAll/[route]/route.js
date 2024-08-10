@@ -8,8 +8,8 @@ import { NextResponse } from "next/server";
 export async function GET(req, { params }) {
   await dbConnect();
 
-  const url = new URL(req.url);
   const { route } = params;
+  const url = new URL(req.url);
   const passcode = url.searchParams.get("passcode");
   const token = await req.headers.get("authorization");
   const query = url.searchParams.get("str");
