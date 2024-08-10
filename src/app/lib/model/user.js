@@ -5,6 +5,14 @@ const userSchema = new mongoose.Schema(
   {
     route: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    permissions: [
+      {
+        permissionId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Permission",
+        },
+      },
+    ],
   },
   {
     timestamps: true,

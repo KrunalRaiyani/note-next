@@ -1,0 +1,92 @@
+get all
+
+curl --location 'http://localhost:3000/api/note/getAll/test?passcode=aa&str=test' \
+--header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmI2M2MxZGY1YjI1MDExYTQ0ZTZhZjUiLCJpYXQiOjE3MjMyOTI1NzIsImV4cCI6MTcyMzg5NzM3Mn0.l849u0o2AoDp8aXUvAYcnuXyiJ0BQw6PvVC7Id0x_kM'
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+login
+
+curl --location 'http://localhost:3000/api/auth/login' \
+--header 'Content-Type: application/json' \
+--data '{
+    "route":"test",
+    "password":"123"
+}'
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+create note
+
+curl --location 'http://localhost:3000/api/note/create/test' \
+--header 'authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmI2M2MxZGY1YjI1MDExYTQ0ZTZhZjUiLCJpYXQiOjE3MjMyOTI1NzIsImV4cCI6MTcyMzg5NzM3Mn0.l849u0o2AoDp8aXUvAYcnuXyiJ0BQw6PvVC7Id0x_kM' \
+--header 'Content-Type: application/json' \
+--data '{
+    "noteId": "check",
+    "note": "abcd",
+    "title": "testing note"
+}'
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+
+delete note
+
+curl --location --request DELETE 'http://localhost:3000/api/note/delete/abcd/11' \
+--header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmI2M2MxZGY1YjI1MDExYTQ0ZTZhZjUiLCJpYXQiOjE3MjMyNzUzMTcsImV4cCI6MTcyNTg2NzMxN30.jrfcnB80d8KIYE4axAJSFBVPG5nVi9wxfNiEsWxWeWg'
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+access create
+
+curl --location 'http://localhost:3000/api/share/access/create' \
+--header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmI2M2MxZGY1YjI1MDExYTQ0ZTZhZjUiLCJpYXQiOjE3MjMyOTI1NzIsImV4cCI6MTcyMzg5NzM3Mn0.l849u0o2AoDp8aXUvAYcnuXyiJ0BQw6PvVC7Id0x_kM' \
+--header 'Content-Type: application/json' \
+--data '{
+    "noteIds":[44],
+    "passcode":"11",
+    "permissionType":"read"
+}'
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+delte access
+
+curl --location --request DELETE 'http://localhost:3000/api/share/access/delete/66b75f0820c4f49610336c51' \
+--header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmI2M2MxZGY1YjI1MDExYTQ0ZTZhZjUiLCJpYXQiOjE3MjMyOTI1NzIsImV4cCI6MTcyMzg5NzM3Mn0.l849u0o2AoDp8aXUvAYcnuXyiJ0BQw6PvVC7Id0x_kM' \
+--header 'Content-Type: application/json' \
+--data '{
+    "noteIds":[44],
+    "passcode":"22",
+    "permissionType":"read"
+}'
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+update access
+
+curl --location --request PUT 'http://localhost:3000/api/share/access/update/66b75f0820c4f49610336c51' \
+--header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NmI2M2MxZGY1YjI1MDExYTQ0ZTZhZjUiLCJpYXQiOjE3MjMyOTI1NzIsImV4cCI6MTcyMzg5NzM3Mn0.l849u0o2AoDp8aXUvAYcnuXyiJ0BQw6PvVC7Id0x_kM' \
+--header 'Content-Type: application/json' \
+--data '{
+    "noteIds":[44],
+    "passcode":"22",
+    "permissionType":"read"
+}'
+
+

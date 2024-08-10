@@ -27,7 +27,7 @@ export async function POST(req) {
       { userId: savedUser._id },
       process.env.NEXT_PUBLIC_JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "7d",
       }
     ); // Set appropriate expiration time
 

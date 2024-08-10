@@ -32,7 +32,7 @@ export async function POST(req) {
       { userId: user._id },
       process.env.NEXT_PUBLIC_JWT_SECRET,
       {
-        expiresIn: "30d",
+        expiresIn: "7d",
       }
     );
 
