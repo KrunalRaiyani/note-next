@@ -1,16 +1,33 @@
+"use client";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import EyeIcon from "./icons/EyeIcon";
 import EyeOffIcon from "./icons/EyeOffIcon";
+import { showErrorToast, showSuccessToast } from "@/utils/toastUtils";
+import { loginApi } from "@/utils/apiCall";
+import { useRouter } from "next/navigation";
+import Spinner from "./ui/Spinner";
 
-export function LoginAccount() {
+export function LoginAccount({ params }) {
+  const router = useRouter();
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Password:", password);
+    try {
+      const res = await loginApi({ route: params?.route, password });
+      localStorage.setItem("noteToken", res?.data?.token);
+      console.log(res?.data?.token, "cehckToken");
+      setLoading(false);
+      showSuccessToast("Login successfully!");
+      router.push(`/${params?.route}`);
+    } catch (error) {
+      setLoading(false);
+      showErrorToast(error?.response?.data?.message);
+    }
   };
 
   return (
@@ -40,8 +57,11 @@ export function LoginAccount() {
               <span className="sr-only">Toggle password visibility</span>
             </button>
           </div>
-          <Button type="submit" className="w-full py-2 bg-slate-800 text-white">
-            Login
+          <Button
+            type="submit"
+            className="w-full py-2 bg-slate-800 text-white flex items-center justify-center"
+            disabled={loading}>
+            {loading ? <Spinner className="text-white" /> : "Login"}
           </Button>
         </form>
       </div>

@@ -5,52 +5,41 @@ import { Sidebar } from "./Sidebar";
 import { NoteEditor } from "./NoteEditor";
 import useColorMode from "@/hooks/useColorMode";
 import { getNotesApi } from "@/utils/apiCall";
+import { useRouter } from "next/navigation";
 
-export function Note() {
+export function Note({ params }) {
+  const router = useRouter();
+
   const [colorMode, setColorMode] = useColorMode();
+  const [noteList, setNoteList] = useState([]);
+  const [currentNote, setCurrentNote] = useState({});
 
   useEffect(() => {
     localStorage.setItem("colorMode", colorMode);
   }, [colorMode]);
 
-  const history = [
-    {
-      _id: "1",
-      title: "Meeting Notes",
-      date: "206",
-    },
-    {
-      _id: "2",
-      title: "Grocery List",
-      date: "7",
-    },
-    {
-      _id: "3",
-      title: "Project Roadmap",
-      date: "3",
-    },
-    {
-      _id: "4",
-      title: "Vacation Planning",
-      date: "30",
-    },
-  ];
-
-  const handleSave = () => {
-    // Handle save note logic
-  };
-
   const handleDelete = () => {
     // Handle delete note logic
   };
 
-  const getNotes = async (route) => {
+  const getNotes = async (query = "") => {
     try {
-      const data = await getNotesApi("test1");
-      console.log(data, "cehckData");
+      const res = await getNotesApi(params?.route, query);
+      // console.log(data, "cehckData");
+      setNoteList(res?.data?.data);
     } catch (error) {
-      console.log(error, "cehckData");
+      console.log(error?.response?.data, "cehckData");
+      if (error?.response?.data?.action) {
+        error?.response?.data?.action === "register" &&
+          router.push("/register");
+        error?.response?.data?.action === "login" &&
+          router.push(`/login/${params?.route}`);
+      }
     }
+  };
+
+  const searchFilter = (str) => {
+    getNotes(`str=${str}`);
   };
 
   useEffect(() => {
@@ -63,14 +52,16 @@ export function Note() {
         colorMode === "dark" ? "dark" : ""
       }`}>
       <Sidebar
-        history={history}
         colorMode={colorMode}
         setColorMode={setColorMode}
+        noteList={noteList}
+        searchFilter={searchFilter}
+        setCurrentNote={setCurrentNote}
       />
       <NoteEditor
         colorMode={colorMode}
-        onSave={handleSave}
         onDelete={handleDelete}
+        currentNote={currentNote}
       />
     </div>
   );

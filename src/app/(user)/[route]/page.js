@@ -1,10 +1,10 @@
 "use client";
 import { Note } from "@/components/Note";
 
-export default function Home() {
+export default function Home({ params }) {
   return (
     <div>
-      <Note />
+      <Note params={params} />
     </div>
   );
 }

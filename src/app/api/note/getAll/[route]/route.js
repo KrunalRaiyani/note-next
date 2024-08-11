@@ -22,8 +22,10 @@ export async function GET(req, { params }) {
         { title: { $regex: query, $options: "i" } },
         { note: { $regex: query, $options: "i" } },
       ],
-    });
+    }).sort({ createdAt: -1 }); // Sort by createdAt in descending order
   };
+
+  const routeUser = await UserModel.findOne({ route: route });
 
   // First, check if passcode and route are provided
   if (route && passcode) {
@@ -60,7 +62,7 @@ export async function GET(req, { params }) {
       const filter = { noteId: { $in: permission.noteIds } };
       const notes = query
         ? await searchNotes(filter)
-        : await NoteModel.find(filter);
+        : await NoteModel.find(filter).sort({ createdAt: -1 }); // Sort by createdAt in descending order
       return NextResponse.json({ data: notes }, { status: 200 });
     } catch (error) {
       return NextResponse.json(
@@ -93,15 +95,24 @@ export async function GET(req, { params }) {
       const filter = { userId };
       const notes = query
         ? await searchNotes(filter)
-        : await NoteModel.find(filter);
+        : await NoteModel.find(filter).sort({ createdAt: -1 }); // Sort by createdAt in descending order
       return NextResponse.json(
         { data: notes, status: "success" },
         { status: 200 }
       );
     } catch (error) {
-      if (error.message.includes("Invalid token")) {
+      if (error.message.includes("Invalid token") && routeUser) {
         return NextResponse.json(
           { message: "Invalid token. Please log in again.", action: "login" },
+          { status: 401 }
+        );
+      }
+      if (error.message.includes("Invalid token") && !routeUser) {
+        return NextResponse.json(
+          {
+            message: "Invalid token. Please log in again.",
+            action: "register",
+          },
           { status: 401 }
         );
       }
@@ -113,7 +124,6 @@ export async function GET(req, { params }) {
       );
     }
   } else {
-    const routeUser = await UserModel.findOne({ route: route });
     if (routeUser) {
       return NextResponse.json(
         { message: "Try to login first", action: "login" },

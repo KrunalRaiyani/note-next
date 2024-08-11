@@ -1,10 +1,9 @@
-"use client";
 import { LoginAccount } from "@/components/LoginAccount";
 
-export default function Home() {
+export default function Home({ params }) {
   return (
     <div>
-      <LoginAccount />
+      <LoginAccount params={params} />
     </div>
   );
 }

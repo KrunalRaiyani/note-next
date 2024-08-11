@@ -7,21 +7,36 @@ import PlusIcon from "./icons/PlusIcon";
 import SearchIcon from "./icons/SearchIcon";
 import SunIcon from "./icons/SunIcon";
 import { NoteItem } from "./NoteListItem";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
-export function Sidebar({ history, setColorMode, colorMode }) {
+export function Sidebar({
+  noteList,
+  searchFilter,
+  setCurrentNote,
+  setColorMode,
+  colorMode,
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const timer = useRef(null);
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
   };
 
+  function search(e) {
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+    timer.current = setTimeout(() => {
+      searchFilter(e?.target?.value);
+    }, 200);
+  }
+
   return (
     <div
       className={`flex flex-col bg-white dark:bg-slate-800 text-black dark:text-white p-4 gap-4 ${
         isExpanded ? "h-auto max-h-screen overflow-auto" : "h-screen"
-      }`}
-    >
+      }`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <FilePenIcon className="w-5 h-5" />
@@ -31,20 +46,18 @@ export function Sidebar({ history, setColorMode, colorMode }) {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Toggle color mode"
             onClick={() =>
               setColorMode(colorMode === "light" ? "dark" : "light")
-            }
-          >
+            }>
             {colorMode === "light" ? (
               <MoonIcon className="w-5 h-5" />
             ) : (
               <SunIcon className="w-5 h-5" />
             )}
-            <span className="sr-only">Toggle colorMode</span>
           </Button>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" aria-label="New note">
             <PlusIcon className="w-5 h-5" />
-            <span className="sr-only">New Note</span>
           </Button>
         </div>
       </div>
@@ -54,14 +67,20 @@ export function Sidebar({ history, setColorMode, colorMode }) {
             <SearchIcon className="absolute left-2 top-3 w-4 h-4 text-muted-foreground dark:text-muted-foreground" />
             <Input
               type="search"
+              onChange={search}
               placeholder="Search notes..."
               className="pl-8 w-full bg-white dark:bg-slate-800 text-black dark:text-white dark:border-gray-300 outline-none"
+              style={{ boxShadow: "none" }}
             />
           </div>
           <div className="grid gap-1">
-            {history?.slice(0, isExpanded ? history.length : 10).map((item) => (
-              <NoteItem key={item._id} title={item.title} date={item.date} />
-            ))}
+            {noteList
+              ?.slice(0, isExpanded ? noteList.length : 10)
+              .map((item) => (
+                <button key={item._id} onClick={() => setCurrentNote(item)}>
+                  <NoteItem title={item?.title} date={item?.createdAt} />
+                </button>
+              ))}
           </div>
         </div>
       </div>
