@@ -1,10 +1,10 @@
 "use client";
-import { LoginAccount } from "@/components/LoginAccount";
+import { Note } from "@/components/Note";
 
 export default function Home() {
   return (
     <div>
-      <LoginAccount />
+      <Note />
     </div>
   );
 }

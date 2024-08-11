@@ -77,7 +77,7 @@ export async function GET(req, { params }) {
 
       if (!user) {
         return NextResponse.json(
-          { message: "Invalid token or user not found" },
+          { message: "User not found", action: "register" },
           { status: 401 }
         );
       }
@@ -99,14 +99,30 @@ export async function GET(req, { params }) {
         { status: 200 }
       );
     } catch (error) {
+      if (error.message.includes("Invalid token")) {
+        return NextResponse.json(
+          { message: "Invalid token. Please log in again.", action: "login" },
+          { status: 401 }
+        );
+      }
+
+      // For other errors
       return NextResponse.json(
         { message: error.message || "Something went wrong" },
         { status: 500 }
       );
     }
   } else {
+    const routeUser = await UserModel.findOne({ route: route });
+    if (routeUser) {
+      return NextResponse.json(
+        { message: "Try to login first", action: "login" },
+        { status: 401 }
+      );
+    }
+
     return NextResponse.json(
-      { message: "Authorization required" },
+      { message: "Authorization required", action: "register" },
       { status: 401 }
     );
   }

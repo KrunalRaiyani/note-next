@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { NoteEditor } from "./NoteEditor";
 import useColorMode from "@/hooks/useColorMode";
+import { getNotesApi } from "@/utils/apiCall";
 
 export function Note() {
   const [colorMode, setColorMode] = useColorMode();
@@ -43,12 +44,24 @@ export function Note() {
     // Handle delete note logic
   };
 
+  const getNotes = async (route) => {
+    try {
+      const data = await getNotesApi("test1");
+      console.log(data, "cehckData");
+    } catch (error) {
+      console.log(error, "cehckData");
+    }
+  };
+
+  useEffect(() => {
+    getNotes();
+  }, []);
+
   return (
     <div
       className={`grid md:grid-cols-[260px_1fr] min-h-screen w-full ${
         colorMode === "dark" ? "dark" : ""
-      }`}
-    >
+      }`}>
       <Sidebar
         history={history}
         colorMode={colorMode}
