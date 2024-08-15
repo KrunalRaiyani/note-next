@@ -15,6 +15,7 @@ export function Sidebar({
   setCurrentNote,
   setColorMode,
   colorMode,
+  createBlankNote,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const timer = useRef(null);
@@ -56,7 +57,11 @@ export function Sidebar({
               <SunIcon className="w-5 h-5" />
             )}
           </Button>
-          <Button variant="ghost" size="icon" aria-label="New note">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="New note"
+            onClick={createBlankNote}>
             <PlusIcon className="w-5 h-5" />
           </Button>
         </div>

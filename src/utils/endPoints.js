@@ -1,3 +1,9 @@
 export const GET_ALL_NOTES = "api/note/getAll";
 export const REGISTER = "api/auth/sign-up";
 export const LOGIN = "api/auth/login";
+export const CREATE_NOTE = "api/note/create";
+export const DELETE_NOTE = "api/note/delete";
+export const GET_ALL_ACCESS = "api/share/access/getAll";
+export const GIVE_ACCESS = "api/share/access/create";
+export const EDIT_ACCESS = "/api/share/access/update";
+export const DELETE_ACCESS = "/api/share/access/delete";
