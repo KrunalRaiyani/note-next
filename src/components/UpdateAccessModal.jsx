@@ -11,12 +11,16 @@ import { useState } from "react";
 import ReadIcon from "./icons/ReadIcon";
 import WriteIcon from "./icons/WriteIcon";
 import { toast } from "react-hot-toast";
-import { giveAccessApi } from "@/utils/apiCall";
+import { updateAccessApi } from "@/utils/apiCall";
 
-function GiveAccessModal({ open, onClose, noteList }) {
-  const [selectedAccess, setSelectedAccess] = useState("read");
-  const [selectedNotes, setSelectedNotes] = useState([]);
-  const [passcode, setPasscode] = useState(""); // New state for passcode
+function UpdateAccessModal({ open, onClose, noteList, accessDetails }) {
+  const [selectedAccess, setSelectedAccess] = useState(
+    accessDetails?.permissionType || "read"
+  );
+  const [selectedNotes, setSelectedNotes] = useState(
+    accessDetails?.noteIds || []
+  );
+  const [passcode, setPasscode] = useState(accessDetails?.passcode || "");
 
   const handleAccessChange = (accessType) => {
     setSelectedAccess(accessType);
@@ -36,17 +40,17 @@ function GiveAccessModal({ open, onClose, noteList }) {
 
   const handleSubmit = async () => {
     try {
-      await giveAccessApi({
+      await updateAccessApi({
         passcode,
         noteIds: selectedNotes,
         permissionType: selectedAccess,
       });
-      toast.success("Access granted successfully!");
+      toast.success("Access updated successfully!");
 
-      // Clear inputs and notes after successful submission
+      // Clear inputs after successful submission
       setPasscode("");
       setSelectedNotes([]);
-      setSelectedAccess("read"); // Reset to default if needed
+      setSelectedAccess("read");
 
       onClose();
     } catch (error) {
@@ -56,12 +60,18 @@ function GiveAccessModal({ open, onClose, noteList }) {
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent className="p-6 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-lg">
+      <AlertDialogContent className="p-6 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg shadow-lg relative">
+        <button
+          className="absolute top-3 right-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+          onClick={onClose}>
+          {/* <XIcon className="w-5 h-5" /> */}
+          JJJJ
+        </button>
         <AlertDialogTitle className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-          Give Access
+          Update Access
         </AlertDialogTitle>
         <AlertDialogDescription className="mt-2 text-slate-700 dark:text-slate-400">
-          Select access type and notes to grant access.
+          Update access settings for the selected note.
         </AlertDialogDescription>
         <div className="mt-4">
           <label className="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -108,7 +118,7 @@ function GiveAccessModal({ open, onClose, noteList }) {
           </label>
           <div
             className="max-h-60 overflow-y-auto space-y-2 flex flex-col"
-            style={{ maxHeight: "200px" }} // Fixed height for the note card container
+            style={{ maxHeight: "300px" }} // Fixed height for the note card container
           >
             {noteList?.map((note) => (
               <div
@@ -149,4 +159,4 @@ function GiveAccessModal({ open, onClose, noteList }) {
   );
 }
 
-export default GiveAccessModal;
+export default UpdateAccessModal;

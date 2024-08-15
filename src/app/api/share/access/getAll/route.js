@@ -46,9 +46,10 @@ export async function GET(req) {
     // Lookup notes based on permissions
     const notesPromises = permissions.map(async (permission) => {
       const notes = await NoteModel.find({
-        _id: { $in: permission.noteIds },
+        noteId: { $in: permission.noteIds },
       });
       return {
+        permissionId: permission._id,
         passcode: permission.passcode,
         permissions: permission.permissions,
         notes: notes.map((note) => ({
